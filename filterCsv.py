@@ -76,10 +76,10 @@ if __name__ =="__main__":
 
             # Apply filter to data
             newData = filter.filter(pd.to_datetime(row['_time']).to_numpy(np.int64), row['_value'])
-            if(newData):
+            for data in newData:
                 newRow = row.to_dict()
-                newRow["_time"] = newData[0]
-                newRow["_value"] = newData[1]
+                newRow["_time"] = data[0]
+                newRow["_value"] = data[1]
                 output += [newRow]
 
     # Force the last point to be stored for each fitler
@@ -87,16 +87,15 @@ if __name__ =="__main__":
         for field, filter in fields.items():
             if(args.lastvalue):
                 for (tags, filter) in [([], filter)] + filter.getAllChildren():
-                    newData = filter.flush()
-                    if(newData):
+                    for data in filter.flush():
                         newRow = dict()
-                        newRow["_start"] = newData[0]
-                        newRow["_stop"] = newData[0]
-                        newRow["_time"] = newData[0]
                         newRow["table"] = 0
-                        newRow["_value"] = newData[1]
+                        newRow["_start"] = data[0]
+                        newRow["_stop"] = data[0]
+                        newRow["_time"] = data[0]
                         newRow["_measurement"] = measurement
                         newRow["_field"] = field
+                        newRow["_value"] = data[1]
                         for (tagName, tagValue) in tags:
                             newRow[tagName] = tagValue
                         output += [newRow]
