@@ -20,17 +20,24 @@ class DeadbandFilterTree(DeadbandFilter):
                 result = self._children[tag][value]
         return result
 
-    def walk(tags):
+    def walk(self, tags):
         result = None
 
         # Base case
         if(len(tags) == 0):
             result = self
+        # Recursion case
         else:
+            # Get the next tag to search sub tree for
             (tagKey, tagValue) = tags.pop()
             next = self.getChild(tagKey, tagValue)
+            
+            # If child has been found
             if(next is None):
-                next = self.addChild(tagKey, tagValue, dbfilterTree(self._deadbandvalue, self._maximuminterval))
+                next = DeadbandFilterTree(self._deadbandvalue, self._maximuminterval)
+                self.addChild(tagKey, tagValue, next)
+
+            # Recursively walk
             result = next.walk(tags)
 
         return result
