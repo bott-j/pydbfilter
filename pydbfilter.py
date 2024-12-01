@@ -33,8 +33,8 @@ class DeadbandFilter:
     
     def __init__(self, deadbandValue, maximumInterval):        
         
-        self._deadbandValue = np.int64(deadbandValue)
-        self._maximumInterval = np.int64(maximumInterval)
+        self._deadbandValue = np.float64(deadbandValue)
+        self._maximumInterval = np.float64(maximumInterval)
         self._bounds = None
         self._lastUnacceptedPoint = None
 
@@ -61,28 +61,28 @@ class DeadbandFilter:
     def isTimeout(self, time):
         return (time - self._bounds.time) > self._maximumInterval  
 
-    def updateBounds(self, time, value):
+    def updateBounds(self, newTime, newValue):
         
         # If boundary line exists
         if(self._bounds):
             previousOffset = self._bounds.value
             previousTime = self._bounds.time
-            self._bounds._replace(
-                m = (value - previousOffset)/(time - previousTime),
-                b = value - self._bounds.m * time)
+            self._bounds = self._bounds._replace(
+                m = (newValue - previousOffset)/(newTime - previousTime),
+                b = newValue - self._bounds.m * newTime)
         
         # Otherwise intialize it as a straight line
         else:
-            self._bounds = DeadbandFilterBoundary(np.int64(0), value, time, value)
+            self._bounds = DeadbandFilterBoundary(np.float64(0), newValue, newTime, newValue)
 
-        self._bounds._replace(time = time, value = value)
+        self._bounds = self._bounds._replace(time = newTime, value = newValue)
 
         return    
 
     def filter(self, time, value):
         result = []
-        time = np.int64(time)
-        value = np.int64(value)
+        time = np.float64(time)
+        value = np.float64(value)
 
         # Test conditions for filtering point
         # Test if this is the initial point
