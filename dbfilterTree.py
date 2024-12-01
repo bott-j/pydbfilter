@@ -9,6 +9,18 @@ class DeadbandFilterTree(DeadbandFilter):
         self._maximuminterval = maximuminterval
         return super().__init__(deadbandvalue, maximuminterval)
 
+    def getAllChildren(self, parentTags = []):
+        result = list()
+
+        for tagName, row in self._children.items():
+            for tagValue, filter in row.items(): 
+                # Add child record
+                result += [(parentTags + [(tagName, tagValue)], filter)]
+                # Add children of child record
+                result += filter.getAllChildren(parentTags + [(tagName, tagValue)])
+
+        return result
+
     def addChild(self, tag, value, child):
         self._children.update({tag : {value : child}}) 
         return
@@ -26,6 +38,7 @@ class DeadbandFilterTree(DeadbandFilter):
         # Base case
         if(len(tags) == 0):
             result = self
+
         # Recursion case
         else:
             # Get the next tag to search sub tree for

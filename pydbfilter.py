@@ -5,7 +5,10 @@ class DeadbandFilter:
         return
     
     def filter(self, time, value):
-        return 
+        return (time,value)
+
+    def flush(self):
+        return None
 
 
 
