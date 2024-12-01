@@ -7,7 +7,7 @@ from dbfilterTree import DeadbandFilterTree
 if __name__ =="__main__":
 
     # Parse arguments
-    parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS,
+    parser = argparse.ArgumentParser(
         description="Applies deadband filtering to influxdb CSV exports.")
     parser.add_argument('infile',
         type=str,
@@ -15,26 +15,42 @@ if __name__ =="__main__":
     parser.add_argument('outfile', 
         type=str,
         help="Filename of output CSV file")
+    parser.add_argument('--lastvalue', 
+        action="store_true",
+        help="Always save the last value in the input data to the output file")
+    parser.add_argument('--fields',
+        nargs=4,
+        metavar=("measurement", "field", "deadband", "minimum interval"),
+        action="append",
+        default=[],
+        help="Measurement/field values for which filtering will be applied")
+    parser.add_argument('--tags',
+        nargs="+",
+        default=[],
+        help="Allowed tags")
     args = parser.parse_args()
-
+    
     # Setup initial filter structure
-    globalFilter = DeadbandFilterTree(0.1, 60)
-    measurements = {"my_measurement" : {"temperature" : globalFilter}}
-    allowedTags = ["location"]
+    measurements = dict()
+    for measurement, field, deadband, mininterval in args.fields:
+        measurements[measurement] = {field : DeadbandFilterTree(float(deadband), float(mininterval))}
+    
+    # Allowed tags
+    allowedTags = args.tags
     
     # Load CSV data
-    df = pd.read_csv(args.infile, header=3)
+    dfInput = pd.read_csv(args.infile, header=3)
     output = list()
 
     # filter each point in list
-    for index, row in df.iterrows():
+    for index, row in dfInput.iterrows():
 
         # Apply filter
         if(row['_measurement'] in measurements.keys()
             and row['_field'] in measurements[row['_measurement']].keys()):
             
             # Create list of tags associated with this data
-            tags = [(tag, row[tag]) for tag in allowedTags if tag in df.columns]
+            tags = [(tag, row[tag]) for tag in allowedTags if tag in dfInput.columns]
 
             # Retrieve filter from tree datastructure by tag   
             filter = measurements[row['_measurement']][row['_field']].walk(sorted(tags))
@@ -48,20 +64,23 @@ if __name__ =="__main__":
                 output += [newRow]
 
     # Force the last point to be stored for each fitler
-    for (tags, filter) in [([], globalFilter)] + globalFilter.getAllChildren():
-        newData = filter.flush()
-        if(newData):
-            newRow = dict()
-            newRow["_start"] = newData[0]
-            newRow["_stop"] = newData[0]
-            newRow["_time"] = newData[0]
-            newRow["table"] = 0
-            newRow["_value"] = newData[1]
-            newRow["_measurement"] = "my_measurement"
-            newRow["_field"] = "temperature"
-            for (tagName, tagValue) in tags:
-                newRow[tagName] = tagValue
-            output += [newRow]
+    for measurement, fields in measurements.items():
+        for field, filter in fields.items():
+            if(args.lastvalue):
+                for (tags, filter) in [([], filter)] + filter.getAllChildren():
+                    newData = filter.flush()
+                    if(newData):
+                        newRow = dict()
+                        newRow["_start"] = newData[0]
+                        newRow["_stop"] = newData[0]
+                        newRow["_time"] = newData[0]
+                        newRow["table"] = 0
+                        newRow["_value"] = newData[1]
+                        newRow["_measurement"] = measurement
+                        newRow["_field"] = field
+                        for (tagName, tagValue) in tags:
+                            newRow[tagName] = tagValue
+                        output += [newRow]
 
     # Convert to pandas dataframe    
     dfOutput = pd.DataFrame(data=output)
