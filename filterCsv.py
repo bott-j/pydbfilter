@@ -1,3 +1,4 @@
+import argparse
 import pandas as pd
 import numpy as np
 from dbfilterTree import DeadbandFilterTree
@@ -6,6 +7,15 @@ from dbfilterTree import DeadbandFilterTree
 if __name__ =="__main__":
 
     # Parse arguments
+    parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS,
+        description="Applies deadband filtering to influxdb CSV exports.")
+    parser.add_argument('infile',
+        type=str,
+        help="Filename of input CSV file")
+    parser.add_argument('outfile', 
+        type=str,
+        help="Filename of output CSV file")
+    args = parser.parse_args()
 
     # Setup initial filter structure
     globalFilter = DeadbandFilterTree(0.1, 60)
@@ -13,8 +23,8 @@ if __name__ =="__main__":
     allowedTags = ["location"]
     
     # Load CSV data
-    df = pd.read_csv("query.csv", header=3)
-    listOutput = list()
+    df = pd.read_csv(args.infile, header=3)
+    output = list()
 
     # filter each point in list
     for index, row in df.iterrows():
@@ -35,7 +45,7 @@ if __name__ =="__main__":
                 newRow = row.to_dict()
                 newRow["_time"] = newData[0]
                 newRow["_value"] = newData[1]
-                listOutput += [newRow]
+                output += [newRow]
 
     # Force the last point to be stored for each fitler
     for (tags, filter) in [([], globalFilter)] + globalFilter.getAllChildren():
@@ -51,11 +61,10 @@ if __name__ =="__main__":
             newRow["_field"] = "temperature"
             for (tagName, tagValue) in tags:
                 newRow[tagName] = tagValue
-
-            listOutput += [newRow]
+            output += [newRow]
 
     # Convert to pandas dataframe    
-    dfOutput = pd.DataFrame(data=listOutput)
+    dfOutput = pd.DataFrame(data=output)
 
     # Save to output CSV file
-    dfOutput.to_csv("query_out.csv", index=False)
+    dfOutput.to_csv(args.outfile, index=False)
