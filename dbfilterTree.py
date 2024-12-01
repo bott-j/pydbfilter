@@ -1,4 +1,19 @@
+#!/usr/bin/env python
+"""dbfilterTree.py: Implements DeadbandFilter class as a tree data structure.\
+"""
+
+# Import custom modules
 from pydbfilter import DeadbandFilter
+
+# Authorship information
+__author__ = "James Bott"
+__copyright__ = "Copyright 2024, James Bott"
+__credits__ = ["James Bott"]
+__license__ = "MIT"
+__version__ = "0.0.1"
+__maintainer__ = "James Bott"
+__email__ = "https://github.com/bott-j"
+__status__ = "Development"
 
 # Decorator converts filter class into a tree data structure 
 class DeadbandFilterTree(DeadbandFilter):

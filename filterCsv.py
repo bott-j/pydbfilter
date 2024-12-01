@@ -1,7 +1,26 @@
+#!/usr/bin/env python
+"""filterCsv.py: Applies deadband fitlering to exported CSV files from\
+ influxdb v2."""
+ 
+ # Import built-in modules
 import argparse
+
+# Import third-party modules
 import pandas as pd
 import numpy as np
+
+# Import custom modules
 from dbfilterTree import DeadbandFilterTree
+
+# Authorship information
+__author__ = "James Bott"
+__copyright__ = "Copyright 2024, James Bott"
+__credits__ = ["James Bott"]
+__license__ = "MIT"
+__version__ = "0.0.1"
+__maintainer__ = "James Bott"
+__email__ = "https://github.com/bott-j"
+__status__ = "Development"
 
 # If run from command line
 if __name__ =="__main__":
