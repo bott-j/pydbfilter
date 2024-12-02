@@ -32,7 +32,7 @@ DeadbandFilterPoint = collections.namedtuple('DeadbandFilterPoint',
 class DeadbandFilter:    
     
     def __init__(self, deadbandValue, maximumInterval):        
-        
+        """ Class constructor. """
         self._deadbandValue = np.float64(deadbandValue)
         self._maximumInterval = np.float64(maximumInterval)
         self._bounds = None
@@ -41,6 +41,7 @@ class DeadbandFilter:
         return
 
     def isOutsideBounds(self, time, value):
+        """ Tests if a time/value point is outside of deadband."""
         result = False
         
         # Calculate the lower and upper thresholds at this point in time
@@ -59,10 +60,11 @@ class DeadbandFilter:
         return result
 
     def isTimeout(self, time):
+        """ Checks if time for point exceeds maximum interval. """
         return (time - self._bounds.time) > self._maximumInterval  
 
     def updateBounds(self, newTime, newValue):
-        
+        """ Updates the linear deadband center line. """
         # If boundary line exists
         if(self._bounds):
             previousOffset = self._bounds.value
@@ -80,6 +82,7 @@ class DeadbandFilter:
         return    
 
     def filter(self, time, value):
+        """ Filters a supplied time/value point. """
         result = []
         time = np.float64(time)
         value = np.float64(value)
@@ -114,6 +117,7 @@ class DeadbandFilter:
         return result
 
     def flush(self):
+        """ Return any pending unaccepted point. """
         result = []
         if(self._lastUnacceptedPoint):
             result += [(self._lastUnacceptedPoint.time, self._lastUnacceptedPoint.value)]
