@@ -17,14 +17,18 @@ __status__ = "Development"
 
 # Decorator converts filter class into a tree data structure 
 class DeadbandFilterTree(DeadbandFilter):
-
+    
     def __init__(self, deadbandvalue, maximuminterval):
+        """ Class constructor. """
         self._children = dict()
         self._deadbandvalue = deadbandvalue
         self._maximuminterval = maximuminterval
         return super().__init__(deadbandvalue, maximuminterval)
 
     def getAllChildren(self, parentTags = []):
+        """ Method returns a list where each element is a tuple containing a 
+            list of associated tags and a DeadbandFilter object instance.
+        """ 
         result = list()
 
         for tagName, row in self._children.items():
@@ -36,18 +40,35 @@ class DeadbandFilterTree(DeadbandFilter):
 
         return result
 
-    def addChild(self, tag, value, child):
-        self._children.update({tag : {value : child}}) 
+    def _addChild(self, tag, value, child):
+        """ Adds a child to this tree node. """
+
+        # If key already exists, update dict
+        if tag in self._children.keys():
+            self._children[tag][value] = child
+        # If key doesn't exist, add dict
+        else:
+            self._children[tag] = {value : child}
+        
         return
 
-    def getChild(self, tag, value):
+    def _getChild(self, tag, value):
+        """ Retrieces a child from this tree node. """
         result = None
+
+        # If tag name exists
         if(tag in self._children.keys()):
+            # If tag value exists
             if(value in self._children[tag].keys()):
                 result = self._children[tag][value]
+
         return result
 
     def walk(self, tags):
+        """ Searches the tree for a node matching the tags specified. 
+            Returns the DeadbandFilter object instance matching the tags.
+            If one does not exist it is created.
+        """
         result = None
 
         # Base case
@@ -58,12 +79,12 @@ class DeadbandFilterTree(DeadbandFilter):
         else:
             # Get the next tag to search sub tree for
             (tagKey, tagValue) = tags.pop()
-            next = self.getChild(tagKey, tagValue)
+            next = self._getChild(tagKey, tagValue)
             
             # If child has been found
             if(next is None):
                 next = DeadbandFilterTree(self._deadbandvalue, self._maximuminterval)
-                self.addChild(tagKey, tagValue, next)
+                self._addChild(tagKey, tagValue, next)
 
             # Recursively walk
             result = next.walk(tags)
