@@ -25,7 +25,7 @@ __status__ = "Development"
 
 # Create random walk samples
 def createDataRandomWalk(n = 1000):
-	
+	""" Creates a random walk dataset."""
 	# Time indecies
 	x = [i for i in range(0, n)]
 
@@ -43,7 +43,7 @@ def createDataClouds(n = 1000,
 		pNoCloud = 0.026, 
 		minAtt = 0.3, 
 		maxAtt = 0.6):
-	
+	""" Creates cloud profile using MDP. """
 	# Time indecies
 	x = [i for i in range(0, n)]
 	
