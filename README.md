@@ -8,7 +8,7 @@ A dead-band filter Python module together with tools for processing of influxdb 
 #description
 DESCRIPTION
 
-![Point will be accepted if it exceeds the linear boundary lines determined from last two accepted points.](https://github.com/bott-j/pydbfilter/blob/main/image.jpg?raw=true)
+![Point will be accepted if it exceeds the linear boundary lines determined from last two accepted points.](image.jpg?raw=true)
 
 #gettingstarted
 GETTING STARTED
