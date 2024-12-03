@@ -1,11 +1,11 @@
 # pydbfilter
 A dead-band filter Python module together with tools for processing of influxdb TCP/IP line protocol streams and CSV data files.
 
-[Description](##description)
+[Description](#description)
 
-[Getting Started](##getting-started)
+[Getting Started](#getting-started)
 
-[Program Arguments](##program-arguments)
+[Program Arguments](#program-arguments)
 
 ## Description
 
