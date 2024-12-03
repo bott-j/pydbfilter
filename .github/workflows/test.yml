@@ -31,4 +31,4 @@ jobs:
       - name: Test python
         run: |
           pytest -vv
-          pytest --cov=app --cov-fail-under=90
+          pytest --cov --cov-fail-under=90
