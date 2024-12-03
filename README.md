@@ -1,6 +1,16 @@
 # pydbfilter
 A dead-band filter Python module together with tools for processing of influxdb TCP/IP line protocol streams and CSV data files.
 
+[Description](#description)
+[Getting Started](#gettingstarted)
+[Program Arguments](#arguments)
+
+#description
+DESCRIPTION
+
+![Point will be accepted if it exceeds the linear boundary lines determined from last two accepted points.](https://github.com/bott-j/pydbfilter/blob/main/image.jpg?raw=true)
+
+#gettingstarted
 GETTING STARTED
 
 To process CSV file exports from InfluxDB:
@@ -12,3 +22,7 @@ Where MEASUREMENT_NAME is the measurement name to be processed, and FIELD_NAME i
 The filename query-input.csv is the export from InfluxDB and query-output.csv is the saved output CSV file.
 
 Multiple --fields options can be passed to the script to apply the deadband to different measurements and fields.
+
+
+#arguments
+Program Arguments
