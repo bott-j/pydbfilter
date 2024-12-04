@@ -7,7 +7,7 @@ A Python implementing a swing door compression algorithm together with tools for
 
 [Program Arguments](#program-arguments)
 
-[Program Arguments](#running-unit-tests)
+[Running Unit Tests](#running-unit-tests)
 
 ## Description
 
@@ -23,7 +23,9 @@ The InfluxDB proxy server can be started by running the influxFilterProxy.py Pyt
 
 To run the server, use the format:
 
+```
   $ python influxFilterProxy.py HOST PORT URL --fields MEASUREMENT_NAME FIELD_NAME DEADBAND MAX_INTERVAL --tags TAG_1 TAG_2 TAG_N
+```
 
 Where MEASUREMENT_NAME is the measurement name to be processed and FIELD_NAME is the name of the field to be processed. The values DEADBAND and MAX_INTERVAL specify the deadband to be applied to the raw field value and maximum time gap between field updates. Multiple "--fields" options can be passed to the script to apply the compression to different measurements and fields. The list of tags follow the "--tags" option specifies which tags should be used to differentiate between filtered measurements. For example, if a tag "location" is specified, compression will be applied independently between subsets of the data which differ by value of the "location" tag. 
 
