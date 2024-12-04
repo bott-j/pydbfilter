@@ -132,6 +132,9 @@ if __name__ =="__main__":
 			record=df, 
 			data_frame_measurement_name=measurement)
 
+		# Close connection
+		client.close()
+
 		print("done.")
 
 	# Handle save to CSV file
