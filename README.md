@@ -1,13 +1,10 @@
 # pydbfilter
 A Python implementing a swing door compression algorithm together with tools for processing of InfluxDB TCP/IP line protocol streams and CSV data files.
 
-[Description](#description)
-
-[Getting Started](#getting-started)
-
-[Program Arguments](#program-arguments)
-
-[Running Unit Tests](#running-unit-tests)
+* [Description](#description)
+* [Getting Started](#getting-started)
+* [Program Arguments](#program-arguments)
+* [Running Unit Tests](#running-unit-tests)
 
 ## Description
 
@@ -33,7 +30,9 @@ Here "HOST" and "PORT" are the local IP address and port for the proxy server to
 
 For example, to setup the proxy server to listen on address 127.0.0.1 and port 8087, then forward the data to port 8086 at the InfluxDB server at address 10.0.0.10, the following command could be used:
 
+```
   $ python influxFilterProxy.py 127.0.0.1 8087 "http://10.0.0.10:8086" --fields my_measurement temperature 0.1 10000 --tags location
+```
 
 In this example the compression will be applied to the "temperature" field of the measurement named "my_measurement", with deadband of 0.1 and maximum interval between points of 10'000 ms. The "location" tag will be used to differentiate between subsets of data which should be compressed independantly of each other.
 
@@ -41,7 +40,9 @@ In this example the compression will be applied to the "temperature" field of th
 
 To process CSV file exports from InfluxDB:
 
+```
   $ python filterCsv.py query-input.csv query-output.csv --fields MEASUREMENT_NAME FIELD_NAME DEADBAND MAX_INTERVAL --tags location
+```
 
 The filename query-input.csv is the export from InfluxDB and query-output.csv is the resulting compressed CSV file. The "--fields" and "--tags" options are the same as for proxy server script described previously.
 
