@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 
 # Import custom modules
-from dbfilterTree import DeadbandFilterTree
+from pydbfilter import DeadbandFilterTree
 
 # Authorship information
 __author__ = "James Bott"

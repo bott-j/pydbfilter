@@ -9,8 +9,7 @@ import pytest
 
 # Import custom modules
 sys.path.append('../')
-from dbfilterTree import DeadbandFilterTree
-from pydbfilter import DeadbandFilter
+from pydbfilter import DeadbandFilterTree, DeadbandFilter, BaseFilter
 
 # Authorship information
 __author__ = "James Bott"
@@ -34,8 +33,8 @@ def test_walk():
     filter3 = tree.walk([("location","italy")])
 
     # Check of correct type
-    assert isinstance(filter1, DeadbandFilter)
-    assert isinstance(filter2, DeadbandFilter)
+    assert isinstance(filter1, BaseFilter)
+    assert isinstance(filter2, BaseFilter)
 
     # Check expected instances
     assert filter1 == filter3
