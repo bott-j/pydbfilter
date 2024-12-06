@@ -169,9 +169,9 @@ class SdtFilter(BaseFilter):
         results = []
         
         # The first point is always returned, so no need for a new point
-        if(len(self._lastPoints) > 1)
+        if(len(self._lastPoints) > 1):
             results += [(self._lastPoints[0].time, self._lastPoints[0].value)]
             self._updateWindow(self._lastPoints[-1], self._lastPoints[0]) 
         
-        return    
+        return results    
              
