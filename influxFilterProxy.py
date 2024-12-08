@@ -32,19 +32,16 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
     
 class InfluxProxyHttpHandler(http.server.SimpleHTTPRequestHandler):
-    _client : InfluxDBClient = None
+    # Class variables 
     _linePattern : re.Pattern = re.compile('^([^,]+)(,([^ ]*))? ([^ ]+) ([0-9]+)$')
-    _url : str = None 
-    _lastvalue : bool = None
-    _measurements : dict = None
-    _tags : list = None
-
+ 
     def __init__(self, url, lastvalue, measurements, tags):
         """ Class constructor. """
         self._url = url
         self._lastvalue = lastvalue
         self._measurements = measurements
         self._tags = tags 
+        self._client = None
         return
 
     def __call__(self, *args, **kwargs):
@@ -112,7 +109,7 @@ class InfluxProxyHttpHandler(http.server.SimpleHTTPRequestHandler):
                 token=self.headers["Authorization"].split(" ")[1], 
                 org=query['org']
                 )
-            self._writeApi = client.write_api(write_options=SYNCHRONOUS)
+            self._writeApi = self._client.write_api(write_options=SYNCHRONOUS)
             
         # Get the content length
         nContent = int(self.headers['Content-Length'])
@@ -136,7 +133,7 @@ class InfluxProxyHttpHandler(http.server.SimpleHTTPRequestHandler):
             )
 
         # Close influxdb client connection
-        client.close()
+        self._client.close()
 
         return
 
