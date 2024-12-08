@@ -4,9 +4,6 @@
 # Import built-in modules
 from collections import deque
 
-# Import third party modules
-import numpy as np
-
 # Import custom modules
 from .BaseFilter import BaseFilter
 from .FilterPoint import FilterPoint
@@ -54,7 +51,7 @@ class SdtFilter(BaseFilter):
         
         # Uppdate limits on sloping upper and sloping lower gradients
         self._slopingUpperMax = slopingUpper
-        slopingLowerMax = slopingLower
+        self._slopingLowerMax = slopingLower
 
         return
 
