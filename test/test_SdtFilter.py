@@ -4,9 +4,6 @@
 # Import built-in modules
 import sys
 
-# Import third-party modules
-import pytest
-
 # Import custom modules
 sys.path.append('../')
 from pydbfilter import SdtFilter
