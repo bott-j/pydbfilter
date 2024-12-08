@@ -4,12 +4,9 @@
 # Import built-in modules
 import sys
 
-# Import third-party modules
-import pytest
-
 # Import custom modules
 sys.path.append('../')
-from pydbfilter import DeadbandFilterTree, DeadbandFilter, BaseFilter
+from pydbfilter import DeadbandFilterTree, BaseFilter
 
 # Authorship information
 __author__ = "James Bott"

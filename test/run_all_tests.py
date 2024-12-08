@@ -1,5 +1,4 @@
 # Import build-in modules
-import math
 import sys
 
 # Import third-party modules
