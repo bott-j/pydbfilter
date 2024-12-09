@@ -32,3 +32,5 @@ jobs:
         run: |
           pytest -vv
           pytest --cov --cov-fail-under=90
+      - name: Lint python
+        run: ruff check --output-format=github .
