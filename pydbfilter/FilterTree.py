@@ -21,7 +21,7 @@ class FilterTree(BaseFilter):
     def __init__(self, className, *args, **kwargs):
         """ Class constructor. """
         self._children = dict()
-        self._component = className(args, kwargs)
+        self._component = className(*args, **kwargs)
         self._className = className
         self._classArgs = args
         self._classKwargs = kwargs
@@ -85,7 +85,7 @@ class FilterTree(BaseFilter):
             
             # If child has been found
             if(next is None):
-                next = FilterTree(self._className, self._classArgs, self._classKwargs)
+                next = FilterTree(self._className, *self._classArgs, **self._classKwargs)
                 self._addChild(tagKey, tagValue, next)
 
             # Recursively walk
