@@ -75,7 +75,7 @@ if __name__ =="__main__":
             filter = measurements[row['_measurement']][row['_field']].walk(sorted(tags))
 
             # Apply filter to data
-            newData = filter.filter(pd.to_datetime(row['_time']).to_numpy(np.int64), row['_value'])
+            newData = filter.filter(np.float64(pd.to_datetime(row['_time']).to_numpy(np.int64)), np.float64(row['_value']))
             for data in newData:
                 newRow = row.to_dict()
                 newRow["_time"] = data[0]

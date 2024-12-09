@@ -47,7 +47,7 @@ class InfluxProxyHttpHandler(http.server.SimpleHTTPRequestHandler):
     def __call__(self, *args, **kwargs):
         """ Call SimpleHTTPRequestHandler method. """
         super().__init__(*args, **kwargs)
-        return
+        returns
 
     def handle_line(self, line):
         """ Handles a line of influx line protocol from the request. """
@@ -81,7 +81,7 @@ class InfluxProxyHttpHandler(http.server.SimpleHTTPRequestHandler):
                     filter = self._measurements[measurement][field].walk(sorted(tags.items()))
 
                     # Apply filter to data
-                    newData = filter.filter(pd.to_datetime(int(timestamp)).to_numpy(np.int64), fields[field])
+                    newData = filter.filter(np.float64(pd.to_datetime(int(timestamp)).to_numpy(np.int64)), np.float64(fields[field]))
                     for data in newData:
                         # Add the data to the queue to be forwarded to the real influxdb server
                         points += [{
