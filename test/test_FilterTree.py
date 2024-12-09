@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-"""test_DeadbandFilterTree.py: unit tests for DeadbandFilterTree class."""
+"""test_FilterTree.py: unit tests for FilterTree class."""
 
 # Import built-in modules
 import sys
 
 # Import custom modules
 sys.path.append('../')
-from pydbfilter import DeadbandFilterTree, BaseFilter
+from pydbfilter import FilterTree, SdtFilter, BaseFilter
 
 # Authorship information
 __author__ = "James Bott"
@@ -20,7 +20,7 @@ __status__ = "Development"
 
 def test_walk():
     """Verify walk() method."""
-    tree = DeadbandFilterTree(0.1,100)
+    tree = FilterTree(SdtFilter,0.1,100)
 
     # Create tag associated filters
     filter1 = tree.walk([("location","italy")])
@@ -41,7 +41,7 @@ def test_walk():
 
 def test_getallchildren():
     """ Verify getallchildren() method. """
-    tree = DeadbandFilterTree(0.1,100)
+    tree = FilterTree(SdtFilter, 0.1,100)
 
     # Create tag associated filters
     filter1 = tree.walk([("location","italy")])

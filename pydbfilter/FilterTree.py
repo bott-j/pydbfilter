@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-"""DeadbandFilterTree.py: Implements DeadbandFilter class as a tree data structure.\
+"""FilterTree.py: Implements BaseFilter derived classes as a tree data structure.\
 """
 
 # Import custom modules
-from . import SdtFilter, DeadbandFilter
+from . import SdtFilter, BaseFilter
 
 # Authorship information
 __author__ = "James Bott"
@@ -16,14 +16,16 @@ __email__ = "https://github.com/bott-j"
 __status__ = "Development"
 
 # Decorator converts filter class into a tree data structure 
-class DeadbandFilterTree(SdtFilter):
+class FilterTree(BaseFilter):
     
-    def __init__(self, deadbandvalue, maximuminterval):
+    def __init__(self, className, *args, **kwargs):
         """ Class constructor. """
         self._children = dict()
-        self._deadbandvalue = deadbandvalue
-        self._maximuminterval = maximuminterval
-        return super().__init__(deadbandvalue, maximuminterval)
+        self._component = className(*args, **kwargs)
+        self._className = className
+        self._classArgs = args
+        self._classKwargs = kwargs
+        return
 
     def getAllChildren(self, parentTags = []):
         """ Method returns a list where each element is a tuple containing a 
@@ -83,10 +85,18 @@ class DeadbandFilterTree(SdtFilter):
             
             # If child has been found
             if(next is None):
-                next = DeadbandFilterTree(self._deadbandvalue, self._maximuminterval)
+                next = FilterTree(self._className, *self._classArgs, **self._classKwargs)
                 self._addChild(tagKey, tagValue, next)
 
             # Recursively walk
             result = next.walk(tags)
 
         return result
+
+    def filter(self, time: float, value: float) -> list:
+        """ Pass filter calls to component. """
+        return self._component.filter(time, value)
+
+    def flush(self) -> list:
+        """ Pass flush calls to component. """
+        return self._component.flush()
