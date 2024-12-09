@@ -17,12 +17,17 @@ __status__ = "Development"
 
 class HysteresisFilter(BaseFilter):
 
-    def __init__(self, compressionDeviation, maxInterval):
+    def __init__(self, hystValue, maxInterval):
         """ Class constructor. """
+
+        # Parameters
+        self._hystValue = hystValue
+        self._maxInterval = maxInterval
 
         # Min and max values track the spread of points
         self._minValue = None
         self._maxValue = None
+        self._firstTime = None
 
         # Last point received
         self._lastPoint = FilterPoint(0, 0)
@@ -34,25 +39,37 @@ class HysteresisFilter(BaseFilter):
         results = list()
 
         # Initialise min and max values
-        if(self._minValue = None):
+        if(self._minValue is None):
             self._minValue = value
             self._maxValue = value
+            self._firstTime = time
             results += [(time, value)]
-        # Update min and max values
         else:
+
+            # If max interval value exceeded
+            if((time - self._firstTime) > self._maxInterval):
+                results += [(self._lastPoint.time, self._lastPoint.value)]
+                self._firstTime = self._lastPoint.time
+                self._minValue = self._lastPoint.value
+                self._maxValue = self._lastPoint.value
+
+            # Update min and max values
             if(value > self._maxValue):
                 self._maxValue = value
             if(value < self._minValue):
                 self._minValue = value
 
-        # If hysteresis threshold value exceeded
-        if(self._maxValue - self._minValue > self._hystValue):
-            results += [(time, value)]
-            self._minValue = value
-            self._maxValue = value
+            # If hysteresis threshold value exceeded or max interval
+            # still exceeded
+            if((self._maxValue - self._minValue) > self._hystValue
+                or (time - self._firstTime) > self._maxInterval):
+                results += [(time, value)]
+                self._minValue = value
+                self._maxValue = value
+                self._firstTime = time
 
         # Save the last point
-        self._lastPoint = self._lastPoint.update(time = time, value = value)
+        self._lastPoint = self._lastPoint._replace(time = time, value = value)
 
         return results
 

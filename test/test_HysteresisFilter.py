@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-"""test_SdtFilter.py: unit tests for SdtFilter class."""
+"""test_HysteresisFilter.py: unit tests for HysteresisFilter class."""
 
 # Import built-in modules
 import sys
 
 # Import custom modules
 sys.path.append('../')
-from pydbfilter import SdtFilter
+from pydbfilter import HysteresisFilter
 
 # Authorship information
 __author__ = "James Bott"
@@ -18,33 +18,33 @@ __maintainer__ = "James Bott"
 __email__ = "https://github.com/bott-j"
 __status__ = "Development"
 
-def test_sdt():
+def test_deadband():
     """Verify filter() method deadband filter functionality."""
-    filter = SdtFilter(10,100)
+    filter = HysteresisFilter(10,100)
 
     assert filter.filter(100, 20) == [(100, 20)]
     assert filter.filter(110, 10) == []
     assert filter.filter(120, 20) == []
-    assert filter.filter(140, 40) == [(130,25)]
+    assert filter.filter(140, 40) == [(140,40)]
     assert filter.filter(150, 30) == []
-    assert filter.filter(160, 45) == []
-    assert filter.filter(180, 5) == [(166, 38)]
+    assert filter.filter(160, 45) == [(160, 45)]
+    assert filter.filter(180, 5) == [(180, 5)]
 
     return
 
 def test_timeout():
     """Verify filter() method timeout functionality."""
-    filter = SdtFilter(10,100)
+    filter = HysteresisFilter(10,100)
 
     assert filter.filter(100, -20) == [(100, -20)]
     assert filter.filter(200, -20) == []
     assert filter.filter(301, -20) == [(200, -20),(301,-20)]
-    
+
     return
 
 def test_flush():
     """Verify flush() method."""
-    filter = SdtFilter(10,100)
+    filter = HysteresisFilter(10,100)
 
     assert filter.filter(100, 5) == [(100, 5)]
     assert filter.filter(110, 5) == []
