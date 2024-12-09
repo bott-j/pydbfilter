@@ -23,8 +23,12 @@ def test_deadband():
     filter = DeadbandFilter(0.1,100)
 
     assert filter.filter(100, 1) == [(100, 1)]
-    assert filter.filter(120, 1) == []
-    assert filter.filter(140, 1.1) == [(140, 1.1)]   
+    assert filter.filter(120, 1.1) == []
+    assert filter.filter(140, 0.9) == []
+    assert filter.filter(150, 1.2) == [(150, 1.2)]   
+    assert filter.filter(160, 1.3) == []   
+    assert filter.filter(170, 1.1) == []   
+    assert filter.filter(180, 1) == [(180, 1)]   
     return
 
 def test_timeout():
