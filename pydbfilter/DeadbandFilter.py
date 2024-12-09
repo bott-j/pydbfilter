@@ -21,21 +21,14 @@ __maintainer__ = "James Bott"
 __email__ = "https://github.com/bott-j"
 __status__ = "Development"
 
-# Named tupple holds line between last two points, also used to recalculate         
-DeadbandFilterBoundary = collections.namedtuple('DeadbandFilterBoundary', 
-                            ['m',   # Gradient from two accepted points
-                             'b',   # Offset is height of last accepted point
-                             'time',
-                             'value'])  # Time of last accepted point
-
 class DeadbandFilter(BaseFilter):    
     
     def __init__(self, deadbandValue, maximumInterval):        
         """ Class constructor. """
-        self._deadbandValue = np.float64(deadbandValue)
-        self._maximumInterval = np.float64(maximumInterval)
-        self._bounds = None
-        self._lastUnacceptedPoint = None
+        self._deadbandValue = deadbandValue
+        self._maximumInterval = maximumInterval
+        self._base = None
+        self._lastPoint = FilterPoint(0, 0)
 
         return
 
@@ -43,82 +36,51 @@ class DeadbandFilter(BaseFilter):
         """ Tests if a time/value point is outside of deadband."""
         result = False
         
-        # Calculate the lower and upper thresholds at this point in time
-        upperLimit = self._bounds.m * time \
-                        + self._bounds.b \
-                        + self._deadbandValue / 2.0 
-        lowerLimit = self._bounds.m * time \
-                        + self._bounds.b \
-                        - self._deadbandValue / 2.0
-
         # Test against limits
-        if(value > upperLimit
-            or value < lowerLimit):
+        if(value > (self._base.value + self._deadbandValue)
+            or value < (self._base.value - self._deadbandValue)):
             result = True
 
         return result
 
     def isTimeout(self, time):
         """ Checks if time for point exceeds maximum interval. """
-        return (time - self._bounds.time) > self._maximumInterval  
+        return (time - self._base.time) > self._maximumInterval  
 
-    def updateBounds(self, newTime, newValue):
-        """ Updates the linear deadband center line. """
-        # If boundary line exists
-        if(self._bounds):
-            previousOffset = self._bounds.value
-            previousTime = self._bounds.time
-            self._bounds = self._bounds._replace(
-                m = (newValue - previousOffset)/(newTime - previousTime),
-                b = newValue - self._bounds.m * newTime)
-        
-        # Otherwise intialize it as a straight line
+    def filter(self, time, value) -> list:
+        """ Applies compression to the time-series points. """
+        results = list()
+
+        # Initialise min and max values
+        if(self._base is None):
+            self._base = FilterPoint(time, value)
+            results += [(time, value)]
         else:
-            self._bounds = DeadbandFilterBoundary(np.float64(0), newValue, newTime, newValue)
+            # If max interval value exceeded
+            if(self.isTimeout(time)):
+                results += [(self._lastPoint.time, self._lastPoint.value)]
+                self._base = self._base._replace(time = self._lastPoint.time, value = self._lastPoint.value)
 
-        self._bounds = self._bounds._replace(time = newTime, value = newValue)
-
-        return    
-
-    def filter(self, time, value):
-        """ Filters a supplied time/value point. """
-        result = []
-        time = np.float64(time)
-        value = np.float64(value)
-
-        # Test conditions for filtering point
-        # Test if this is the initial point
-        if(not self._bounds):
-            self.updateBounds(time, value)
-            result += [(time, value)]
-        elif(self.isTimeout(time)):
-            # If the last point was not accepted accept it now
-            if(self._lastUnacceptedPoint):
-                result += [(self._lastUnacceptedPoint.time, self._lastUnacceptedPoint.value)]
-                self.updateBounds(self._lastUnacceptedPoint.time, self._lastUnacceptedPoint.value)
-                self._lastUnacceptedPoint = None
-            # Retest if the new point exceeds bounds or timeout
+            # If hysteresis threshold value exceeded or max interval
+            # still exceeded
             if(self.isOutsideBounds(time, value)
                 or self.isTimeout(time)):
-                result += [(time, value)]
-                self.updateBounds(time, value)
-            else:
-                self._lastUnacceptedPoint = FilterPoint(time, value)    
-        # If this point otherwise exceeds bounds
-        elif(self.isOutsideBounds(time, value)):
-            result += [(time, value)]
-            self.updateBounds(time, value)
-            self._lastUnacceptedPoint = None
-        # Else this point becomes the last unaccepted point
-        else:
-            self._lastUnacceptedPoint = FilterPoint(time, value)
-            
-        return result
+                results += [(time, value)]
+                self._base = self._base._replace(time = time, value = value)
 
-    def flush(self):
-        """ Return any pending unaccepted point. """
-        result = []
-        if(self._lastUnacceptedPoint):
-            result += [(self._lastUnacceptedPoint.time, self._lastUnacceptedPoint.value)]
+        # Save the last point
+        self._lastPoint = self._lastPoint._replace(time = time, value = value)
 
-        return result
+        return results
+
+    def flush(self) -> list:
+        """ Returns the last point if available. """
+        results = []
+        
+        # The first point is always returned, so no need for a new point
+        if(self._base):
+            results += [(self._lastPoint.time, self._lastPoint.value)]
+            self._base = self._base._replace(time = self._lastPoint.time, value = self._lastPoint.value)
+        
+        return results    
+             
