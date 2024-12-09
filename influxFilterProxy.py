@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 
 # Import custom modules
-from pydbfilter import DeadbandFilterTree
+from pydbfilter import FilterTree, SdtFilter
 
 # Authorship information
 __author__ = "James Bott"
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     # Setup initial filter structure
     measurements = dict()
     for measurement, field, deadband, mininterval in args.fields:
-        measurements[measurement] = {field : DeadbandFilterTree(float(deadband), float(mininterval))}
+        measurements[measurement] = {field : FilterTree(SdtFilter, float(deadband), float(mininterval))}
 
     try:
         # Create the server, binding to HOST on PORT
