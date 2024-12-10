@@ -165,10 +165,25 @@ if __name__ == "__main__":
         nargs="+",
         default=[],
         help="Allowed tags")
-    parser.add_argument('--method',
-        choices = ["sdt", "deadband", "hysteresis"],
-        default = "sdt",
-        help="Compression method used.")
+    methodGroup = parser.add_mutually_exclusive_group(required = True)
+	methodGroup.add_argument('--sdt', 
+		nargs=2, 
+		type=float,
+		help="Use swinging door trending method.",
+		metavar=("deviation", "maximum_interval"),
+		default=None)
+    methodGroup.add_argument('--deadband', 
+		nargs=2, 
+		type=float,
+		help="Use deadband filtering.",
+		metavar=("deadband", "maximum_interval"),
+		default=None)
+    methodGroup.add_argument('--sdt', 
+		nargs=2, 
+		type=float,
+		help="Use hysteresis filtering.",
+		metavar=("hysteresis", "maximum_interval"),
+		default=None)
     args = parser.parse_args()
 
     # Setup initial filter structure
