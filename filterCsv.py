@@ -39,20 +39,32 @@ if __name__ =="__main__":
         help="Always save the last value in the input data to the output file")
     parser.add_argument('--fields',
         nargs=4,
-        metavar=("measurement", "field", "deadband", "minimum interval"),
+        metavar=("measurement", "field", "threshold", "maximum interval"),
         action="append",
         default=[],
-        help="Measurement/field values for which filtering will be applied")
+        help="Measurement/field values for which filtering will be applied with specified threshold parameter")
     parser.add_argument('--tags',
         nargs="+",
         default=[],
         help="Allowed tags")
+    parser.add_argument('--method', 
+        type=str,
+        help="Use swinging door trending method.",
+        choices=["sdt", "deadband", "hysteresis"],
+        default="sdt")
     args = parser.parse_args()
     
     # Setup initial filter structure
     measurements = dict()
-    for measurement, field, deadband, mininterval in args.fields:
-        measurements[measurement] = {field : FilterTree(SdtFilter, float(deadband), float(mininterval))}
+    if(args.method == "sdt"):
+        filter = SdtFilter
+    elif(args.method == "deadband"):
+        filter = DeadbandFilter
+    elif(args.method == "hysteresis"):
+        filter = HysteresisFilter
+    for measurement, field, threshold, maxinterval in args.fields:
+        # Add the filter to the dictionary
+        measurements[measurement] = {field : FilterTree(filter, float(threshold), float(maxinterval))}
     
     # Allowed tags
     allowedTags = args.tags

@@ -165,12 +165,23 @@ if __name__ == "__main__":
         nargs="+",
         default=[],
         help="Allowed tags")
+    parser.add_argument('--method', 
+        type=str,
+        help="Use swinging door trending method.",
+        choices=["sdt", "deadband", "hysteresis"],
+        default="sdt")
     args = parser.parse_args()
 
     # Setup initial filter structure
     measurements = dict()
-    for measurement, field, deadband, mininterval in args.fields:
-        measurements[measurement] = {field : FilterTree(SdtFilter, float(deadband), float(mininterval))}
+    if(args.method == "sdt"):
+        filter = SdtFilter
+    elif(args.method == "deadband"):
+        filter = DeadbandFilter
+    elif(args.method == "hysteresis"):
+        filter = HysteresisFilter
+    for measurement, field, threshold, maxinterval in args.fields:
+        measurements[measurement] = {field : FilterTree(filter, float(threshold), float(maxinterval))}
 
     try:
         # Create the server, binding to HOST on PORT
