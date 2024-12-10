@@ -47,6 +47,10 @@ if __name__ =="__main__":
         nargs="+",
         default=[],
         help="Allowed tags")
+    parser.add_argument('--method',
+        choices = ["sdt", "deadband", "hysteresis"],
+        default = "sdt",
+        help="Compression method used.")
     args = parser.parse_args()
     
     # Setup initial filter structure
