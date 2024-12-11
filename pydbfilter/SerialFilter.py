@@ -20,16 +20,16 @@ __maintainer__ = "James Bott"
 __email__ = "https://github.com/bott-j"
 __status__ = "Development"
 
-class SerialFilter():
+class SerialFilter(BaseFilter):
     """ Define interface common to all concrete filter implementations. """
     
     def filterPoints(self, data : Union[DataFrame, list]) -> Union[DataFrame, list]:
 
         # If type is data frame
-        if(type(data) == DataFrame):
+        if(data is DataFrame):
             
             # Must have two columns
-            if(len(df.columns) != 2):
+            if(len(data.columns) != 2):
                 raise ValueError("Input data frame must have two columns.")
         
             # Apply map to series
@@ -37,7 +37,7 @@ class SerialFilter():
             results.iloc[:,1] = data.apply(lambda d: self.filterPoint(d[0], d[1]), axis=1)
 
         # If type is list
-        if(type(data) == list):
+        if(data is list):
             
             # For each point
             results = list()

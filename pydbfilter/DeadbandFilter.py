@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 """pydbfilter.py: Deadband filter class."""
 
-# Import built-in modules
-import collections
-
-# Import third party modules
-import numpy as np
-
 # Import custom modules
 from .SerialFilter import SerialFilter
 from .FilterPoint import FilterPoint

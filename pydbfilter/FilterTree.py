@@ -3,7 +3,7 @@
 """
 
 # Import custom modules
-from . import SdtFilter, BaseFilter
+from . import BaseFilter
 
 # Authorship information
 __author__ = "James Bott"
