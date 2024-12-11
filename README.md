@@ -16,10 +16,10 @@ The InfluxDB proxy server can be started by running the influxFilterProxy.py Pyt
 To run the server, use the format:
 
 ```
-  $ python influxFilterProxy.py HOST PORT URL --fields MEASUREMENT_NAME FIELD_NAME DEADBAND MAX_INTERVAL --tags TAG_1 TAG_2 TAG_N
+  $ python influxFilterProxy.py HOST PORT URL --fields MEASUREMENT_NAME FIELD_NAME THRESHOLD MAX_INTERVAL --tags TAG_1 TAG_2 TAG_N --method METHOD
 ```
 
-Where MEASUREMENT_NAME is the measurement name to be processed and FIELD_NAME is the name of the field to be processed. The values DEADBAND and MAX_INTERVAL specify the deadband to be applied to the raw field value and maximum time gap between field updates. Multiple "--fields" options can be passed to the script to apply the compression to different measurements and fields. The list of tags follow the "--tags" option specifies which tags should be used to differentiate between filtered measurements. For example, if a tag "location" is specified, compression will be applied independently between subsets of the data which differ by value of the "location" tag. 
+Where MEASUREMENT_NAME is the measurement name to be processed and FIELD_NAME is the name of the field to be processed. The values THRESHOLD and MAX_INTERVAL specify the algorithm threshold value to be applied to the raw field value and maximum time gap between field updates. The "--method" parameter species the comrpession algorithm to use, which may be "sdt" (default), "deadband" or "hystersis". In the case of SDT the threshold parameter is the compression deviation, in deadband it is the deadband value, while in hysteresis it is the value of hysteresis to apply. Multiple "--fields" options can be passed to the script to apply the compression to different measurements and fields. The list of tags follow the "--tags" option specifies which tags should be used to differentiate between filtered measurements. For example, if a tag "location" is specified, compression will be applied independently between subsets of the data which differ by value of the "location" tag. 
 
 Here "HOST" and "PORT" are the local IP address and port for the proxy server to listen on. "URL" should point to the final InfluxDB server which the data will be forwarded to. 
 
@@ -36,7 +36,7 @@ In this example the compression will be applied to the "temperature" field of th
 To process CSV file exports from InfluxDB:
 
 ```
-  $ python filterCsv.py query-input.csv query-output.csv --fields MEASUREMENT_NAME FIELD_NAME DEADBAND MAX_INTERVAL --tags location
+  $ python filterCsv.py query-input.csv query-output.csv --fields MEASUREMENT_NAME FIELD_NAME THRESHOLD MAX_INTERVAL --tags location
 ```
 
 The filename query-input.csv is the export from InfluxDB and query-output.csv is the resulting compressed CSV file. The "--fields" and "--tags" options are the same as for proxy server script described previously.
@@ -45,8 +45,8 @@ The filename query-input.csv is the export from InfluxDB and query-output.csv is
 
 ### influxFilterProxy.py
 
-usage: influxFilterProxy.py [-h] [--lastvalue] [--fields measurement field deadband minimum interval]
-                            [--tags TAGS [TAGS ...]]
+usage: influxFilterProxy.py [-h] [--lastvalue] [--fields measurement field threshold maximum_interval]
+                            [--tags TAGS [TAGS ...]] [--method {sdt,deadband,hysteresis}]
                             host port server_url
 
 Influx Database proxy server with deadband filtering.
@@ -59,14 +59,17 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --lastvalue           Always forward the last value on close of input stream
-  --fields measurement field deadband minimum interval
+  --fields measurement field threshold maximum_interval
                         Measurement/field values for which filtering will be applied
   --tags TAGS [TAGS ...]
                         Allowed tags
+  --method {sdt,deadband,hysteresis}
+                        Compression algorithm.
 
 ### filterCsv.py
 
-usage: filterCsv.py [-h] [--lastvalue] [--fields measurement field deadband minimum interval] [--tags TAGS [TAGS ...]]
+usage: filterCsv.py [-h] [--lastvalue] [--fields measurement field threshold maximum_interval]
+                    [--tags TAGS [TAGS ...]] [--method {sdt,deadband,hysteresis}]
                     infile outfile
 
 Applies deadband filtering to influxdb CSV exports.
@@ -78,10 +81,14 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --lastvalue           Always save the last value in the input data to the output file
-  --fields measurement field deadband minimum interval
-                        Measurement/field values for which filtering will be applied
+  --fields measurement field threshold maximum_interval
+                        Measurement/field values for which filtering will be applied with specified threshold
+                        parameter
   --tags TAGS [TAGS ...]
                         Allowed tags
+  --method {sdt,deadband,hysteresis}
+                        Compression algorithm
+                                                
 ## Algorithms
 
 ### Swinging Door trending

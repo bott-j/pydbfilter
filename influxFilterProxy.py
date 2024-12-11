@@ -157,7 +157,7 @@ if __name__ == "__main__":
         help="Always forward the last value on close of input stream")
     parser.add_argument('--fields',
         nargs=4,
-        metavar=("measurement", "field", "deadband", "minimum interval"),
+        metavar=("measurement", "field", "threshold", "maximum_interval"),
         action="append",
         default=[],
         help="Measurement/field values for which filtering will be applied")
@@ -167,7 +167,7 @@ if __name__ == "__main__":
         help="Allowed tags")
     parser.add_argument('--method', 
         type=str,
-        help="Use swinging door trending method.",
+        help="Compression algorithm.",
         choices=["sdt", "deadband", "hysteresis"],
         default="sdt")
     args = parser.parse_args()

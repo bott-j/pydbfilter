@@ -39,7 +39,7 @@ if __name__ =="__main__":
         help="Always save the last value in the input data to the output file")
     parser.add_argument('--fields',
         nargs=4,
-        metavar=("measurement", "field", "threshold", "maximum interval"),
+        metavar=("measurement", "field", "threshold", "maximum_interval"),
         action="append",
         default=[],
         help="Measurement/field values for which filtering will be applied with specified threshold parameter")
@@ -49,7 +49,7 @@ if __name__ =="__main__":
         help="Allowed tags")
     parser.add_argument('--method', 
         type=str,
-        help="Use swinging door trending method.",
+        help="Compression algorithm",
         choices=["sdt", "deadband", "hysteresis"],
         default="sdt")
     args = parser.parse_args()
