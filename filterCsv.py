@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 
 # Import custom modules
-from pydbfilter import FilterTree, SdtFilter
+from pydbfilter import FilterTree, SdtFilter, DeadbandFilter, HysteresisFilter
 
 # Authorship information
 __author__ = "James Bott"

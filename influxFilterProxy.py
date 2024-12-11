@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 
 # Import custom modules
-from pydbfilter import FilterTree, SdtFilter
+from pydbfilter import FilterTree, SdtFilter, DeadbandFilter, HysteresisFilter
 
 # Authorship information
 __author__ = "James Bott"
@@ -47,7 +47,7 @@ class InfluxProxyHttpHandler(http.server.SimpleHTTPRequestHandler):
     def __call__(self, *args, **kwargs):
         """ Call SimpleHTTPRequestHandler method. """
         super().__init__(*args, **kwargs)
-        returns
+        return
 
     def handle_line(self, line):
         """ Handles a line of influx line protocol from the request. """
