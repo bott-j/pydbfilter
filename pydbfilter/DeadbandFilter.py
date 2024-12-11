@@ -41,7 +41,7 @@ class DeadbandFilter(SerialFilter):
         """ Checks if time for point exceeds maximum interval. """
         return (time - self._base.time) > self._maximumInterval  
 
-    def filter(self, time, value) -> list:
+    def filterPoint(self, time, value) -> list:
         """ Applies compression to the time-series points. """
         results = list()
 

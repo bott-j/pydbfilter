@@ -34,7 +34,7 @@ class HysteresisFilter(SerialFilter):
 
         return
 
-    def filter(self, time, value) -> list:
+    def filterPoint(self, time, value) -> list:
         """ Applies compression to the time-series points. """
         results = list()
 

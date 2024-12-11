@@ -24,24 +24,28 @@ class SerialFilter(BaseFilter):
     """ Define interface common to all concrete filter implementations. """
     
     def filterPoints(self, data : Union[DataFrame, list]) -> Union[DataFrame, list]:
-
+        """ Implements filtering buffer as serial calls to filterPoint(). """
         # If type is data frame
-        if(data is DataFrame):
+        if(type(data) is DataFrame):
             
             # Must have two columns
             if(len(data.columns) != 2):
                 raise ValueError("Input data frame must have two columns.")
-        
-            # Apply map to series
-            results = data.copy()
-            results.iloc[:,1] = data.apply(lambda d: self.filterPoint(d[0], d[1]), axis=1)
-
+            
+            # Apply over each row
+            times = list()
+            values = list()
+            for row in data.iterrows():
+                for result in self.filterPoint(row[1][0], row[1][1]):
+                    times += [result[0]]
+                    values += [result[1]]
+            results = DataFrame({data.columns[0] : times, data.columns[1] : values})
         # If type is list
-        if(data is list):
+        if(type(data) is list):
             
             # For each point
             results = list()
             for time, value in data:
-                results += [[time, self.filterPoint(time, value)]]
+                results += self.filterPoint(time, value)
 
         return results
