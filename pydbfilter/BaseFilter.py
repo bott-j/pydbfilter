@@ -3,6 +3,10 @@
 
 # Import built-in modules
 from abc import abstractmethod
+from typing import Union
+
+# Import third-party modules
+from pandas import DataFrame
 
 # Authorship information
 __author__ = "James Bott"
@@ -18,7 +22,11 @@ class BaseFilter():
     """ Define interface common to all concrete filter implementations. """
     
     @abstractmethod
-    def filter(self, time: float, value: float) -> list:
+    def filterPoint(self, time: float, value: float) -> list:
+        pass
+
+    @abstractmethod
+    def filterPoints(self, data : Union[DataFrame, list]) -> Union[DataFrame, list]:
         pass
 
     @abstractmethod

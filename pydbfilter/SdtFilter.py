@@ -5,7 +5,7 @@
 from collections import deque
 
 # Import custom modules
-from .BaseFilter import BaseFilter
+from .SerialFilter import SerialFilter
 from .FilterPoint import FilterPoint
 
 # Authorship information
@@ -18,7 +18,7 @@ __maintainer__ = "James Bott"
 __email__ = "https://github.com/bott-j"
 __status__ = "Development"
 
-class SdtFilter(BaseFilter):
+class SdtFilter(SerialFilter):
 
     def __init__(self, compressionDeviation, maxInterval):
         """ Class constructor. """
