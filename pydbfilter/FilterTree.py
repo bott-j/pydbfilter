@@ -2,8 +2,14 @@
 """FilterTree.py: Implements BaseFilter derived classes as a tree data structure.\
 """
 
+# Import built-in modules
+from typing import Union
+
+# Import third-party modules
+from pandas import DataFrame
+
 # Import custom modules
-from . import SdtFilter, BaseFilter
+from .BaseFilter import BaseFilter
 
 # Authorship information
 __author__ = "James Bott"
@@ -93,9 +99,13 @@ class FilterTree(BaseFilter):
 
         return result
 
-    def filter(self, time: float, value: float) -> list:
-        """ Pass filter calls to component. """
-        return self._component.filter(time, value)
+    def filterPoint(self, time: float, value: float) -> list:
+        """ Pass filterPoint calls to component. """
+        return self._component.filterPoint(time, value)
+
+    def filterPoints(self, data : Union[DataFrame, list]) -> Union[DataFrame, list]:
+        """ Pass filterPoints calls to component. """
+        return self._component.filterPoints(data)
 
     def flush(self) -> list:
         """ Pass flush calls to component. """

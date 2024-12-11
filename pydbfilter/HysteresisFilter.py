@@ -2,7 +2,7 @@
 """Hysteresis.py: Hysteresis concrete implementation."""
 
 # Import custom modules
-from .BaseFilter import BaseFilter
+from .SerialFilter import SerialFilter
 from .FilterPoint import FilterPoint
 
 # Authorship information
@@ -15,7 +15,7 @@ __maintainer__ = "James Bott"
 __email__ = "https://github.com/bott-j"
 __status__ = "Development"
 
-class HysteresisFilter(BaseFilter):
+class HysteresisFilter(SerialFilter):
 
     def __init__(self, hystValue, maxInterval):
         """ Class constructor. """
@@ -34,7 +34,7 @@ class HysteresisFilter(BaseFilter):
 
         return
 
-    def filter(self, time, value) -> list:
+    def filterPoint(self, time, value) -> list:
         """ Applies compression to the time-series points. """
         results = list()
 

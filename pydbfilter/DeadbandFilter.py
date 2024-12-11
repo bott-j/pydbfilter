@@ -1,14 +1,8 @@
 #!/usr/bin/env python
 """pydbfilter.py: Deadband filter class."""
 
-# Import built-in modules
-import collections
-
-# Import third party modules
-import numpy as np
-
 # Import custom modules
-from .BaseFilter import BaseFilter
+from .SerialFilter import SerialFilter
 from .FilterPoint import FilterPoint
 
 # Authorship information
@@ -21,7 +15,7 @@ __maintainer__ = "James Bott"
 __email__ = "https://github.com/bott-j"
 __status__ = "Development"
 
-class DeadbandFilter(BaseFilter):    
+class DeadbandFilter(SerialFilter):    
     
     def __init__(self, deadbandValue, maximumInterval):        
         """ Class constructor. """
@@ -47,7 +41,7 @@ class DeadbandFilter(BaseFilter):
         """ Checks if time for point exceeds maximum interval. """
         return (time - self._base.time) > self._maximumInterval  
 
-    def filter(self, time, value) -> list:
+    def filterPoint(self, time, value) -> list:
         """ Applies compression to the time-series points. """
         results = list()
 
