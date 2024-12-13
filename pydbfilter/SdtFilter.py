@@ -72,7 +72,7 @@ class SdtFilter(SerialFilter):
             results += [(thisPoint.time, thisPoint.value)]
             self._firstTime = thisPoint.time
         # Handle invalid conditions
-        elif(time <= _lastPoints[0].time)
+        elif(time <= self._lastPoints[0].time):
             raise ValueError("Time-series data-point must be newer than previous points.")
         else:
             # Update last point and current point
