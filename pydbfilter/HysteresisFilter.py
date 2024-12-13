@@ -44,8 +44,10 @@ class HysteresisFilter(SerialFilter):
             self._maxValue = value
             self._firstTime = time
             results += [(time, value)]
+        # Handle invalid conditions
+        elif(time <= self._lastPoint.time)
+            raise ValueError("Time-series data-point must be newer than previous points.")
         else:
-
             # If max interval value exceeded
             if((time - self._firstTime) > self._maxInterval):
                 results += [(self._lastPoint.time, self._lastPoint.value)]
