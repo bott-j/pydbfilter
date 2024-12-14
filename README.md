@@ -9,6 +9,34 @@ An Python package implementing time series compression algorithms including swin
 
 ## Getting Started
 
+### Using the package
+
+An object may be instantiated from one of the filter classes:
+
+* DeadbandFilter
+* HysteresisFilter
+* SdtFilter
+
+These classes implement the methods defined in the interface BaseFilter.
+
+To apply compression on a point-by-point basis:
+
+```
+from pydbfilter import SdtFilter
+
+filter = SdtFilter(10, 100)
+
+input_data = [t, sin(math.py*t/1000) for t in range(0, 1000)]
+
+# Filter the first point
+data = filter.filterPoint() 
+for time, value in data: 
+  print(time + " " + data)
+
+# Fitler 
+
+```
+
 ### Running the Proxy Server
 
 The InfluxDB proxy server can be started by running the influxFilterProxy.py Python script. This runs a HTTP server on the specified port which will accept incomming InfluxDB line protocol data, apply the deadband compression to the data, then forward the data to the nominated InfluxDB server.
