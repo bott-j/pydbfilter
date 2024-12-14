@@ -86,9 +86,9 @@ The output data shows a reduced number of points with the distance of all input 
 
 ![Trend showing output data from SDT in orange with input data in blue.](images/example1.png?raw=true)
 
-Points may be filtered as a batch using either a list or pandas dataframe.
+Points may be filtered as a batch using either a list or a Pandas DataFrame with the filterPoints() method.
 
-For example using a list:
+For example, using a list:
 
 ```
 import matplotlib.pyplot as plt
@@ -125,7 +125,9 @@ Results in the following output:
 
 ![Trend showing compressed output data from SDT in orange with input sine function in blue.](images/example2.png?raw=true)
 
-The same may be achieved using a DataFrame object:
+A DataFrame object may also be passed to filterPoints(). In this case the first column will be used as time values and the second column as the magnitude.
+
+And example using a DataFrame object is shown below.
 
 ```
 import matplotlib.pyplot as plt
