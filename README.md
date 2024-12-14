@@ -9,6 +9,163 @@ An Python package implementing time series compression algorithms including swin
 
 ## Getting Started
 
+### Using the package
+
+An object may be instantiated from one of the filter classes:
+
+* DeadbandFilter
+* HysteresisFilter
+* SdtFilter
+
+These classes each implement the same methods defined in the interface BaseFilter.
+
+As an example, to apply compression on a point-by-point basis using SDT, use the filterPoint() method as in the example below.
+
+```
+import matplotlib.pyplot as plt
+from pydbfilter import SdtFilter
+
+# Initialize some data
+input_time = [0, 5, 10, 15, 20]
+input_data = [0, 0.1, 1.6, 1.63, 1.66] 
+
+# Create a filter object
+filter = SdtFilter(0.05, 100)
+
+# Pass in the first point
+output_point = filter.filterPoint(input_time[0], input_data[0])
+print("First point is {0}".format(output_point))
+output_points = output_point
+
+# Pass in the second point
+output_point = filter.filterPoint(input_time[1], input_data[1])
+print("Second point is {0}".format(output_point))
+output_points += output_point
+
+# Pass in the third point
+output_point = filter.filterPoint(input_time[2], input_data[2])
+print("Third point is {0}".format(output_point))
+output_points += output_point
+
+# Pass in the fourth point
+output_point = filter.filterPoint(input_time[3], input_data[3])
+print("Fourth point is {0}".format(output_point))
+output_points += output_point
+
+# Pass in the fifth point
+output_point = filter.filterPoint(input_time[4], input_data[4])
+print("Fifth point is {0}".format(output_point))
+output_points += output_point
+```
+
+The last input point may be flushed to the output using the flush() method:
+
+```
+# Flush the last point
+output_point = filter.flush()
+print("Last point is {0}".format(output_point))
+output_points += output_point
+```
+
+Plotting the output:
+
+```
+# Plot the output
+output_time = [t for (t, d) in output_points]
+output_data = [d for (t, d) in output_points]
+plt.plot(input_time, input_data, "o-", label="Input Data")
+plt.plot(output_time, output_data, "d--", label="Output Data")
+plt.xlabel("Time")
+plt.ylabel("Magnitude")
+plt.title("SDT Single Points (Compression deviation = 0.05)")
+plt.legend()
+plt.show()
+```
+
+The output data shows a reduced number of points with the distance of all input points to the interpolated output data within +/- the compression deviation.
+
+![Trend showing output data from SDT in orange with input data in blue.](images/example1.png?raw=true)
+
+Points may be filtered as a batch using either a list or pandas dataframe.
+
+For example using a list:
+
+```
+import matplotlib.pyplot as plt
+from math import sin, pi
+from pydbfilter import SdtFilter, DeadbandFilter, FilterTree
+
+# Generate a sine wave
+input_time = [i for i in range(0,40)]
+input_data = [sin(t*2*pi/20) for t in input_time] 
+input_points = list(zip(input_time, input_data))
+
+# Create a filter object
+filter = SdtFilter(0.05, 100)
+
+# Filter the points
+output_points = filter.filterPoints(input_points)
+
+# Flush the last point from the filter
+output_points += filter.flush()
+
+# Plot the output
+output_time = [t for (t, d) in output_points]
+output_data = [d for (t, d) in output_points]
+plt.plot(input_time, input_data, "o-", label="Input Data")
+plt.plot(output_time, output_data, "d--", label="Output Data")
+plt.xlabel("Time")
+plt.ylabel("Magnitude")
+plt.title("SDT Batch of Points (Compression deviation = 0.05)")
+plt.legend()
+plt.show()
+```
+
+Results in the following output:
+
+![Trend showing compressed output data from SDT in orange with input sine function in blue.](images/example2.png?raw=true)
+
+The same may be achieved using a DataFrame object:
+
+```
+import matplotlib.pyplot as plt
+from math import sin, pi
+from pandas import DataFrame
+from pydbfilter import SdtFilter, DeadbandFilter, FilterTree
+
+# Generate a sine wave
+input_time = [i for i in range(0,40)]
+input_data = [sin(t*2*pi/20) for t in input_time] 
+input_points = DataFrame({
+                't': input_time,
+                'v' : input_data
+                })
+
+# Create a filter object
+filter = SdtFilter(0.05, 100)
+
+# Filter the points
+output_points = filter.filterPoints(input_points)
+
+# Flush the last point from the filter
+flushed_points = filter.flush()
+output_points = output_points.append({
+    't' : flushed_points[0][0],
+    'v' : flushed_points[0][1]
+    }, ignore_index=True)
+
+# Plot the output
+output_time = output_points['t']
+output_data = output_points['v']
+plt.plot(input_time, input_data, "o-", label="Input Data")
+plt.plot(output_time, output_data, "d--", label="Output Data")
+plt.xlabel("Time")
+plt.ylabel("Magnitude")
+plt.title("SDT Batch of Points (Compression deviation = 0.05)")
+plt.legend()
+plt.show()
+```
+
 ### Running the Proxy Server
 
 The InfluxDB proxy server can be started by running the influxFilterProxy.py Python script. This runs a HTTP server on the specified port which will accept incomming InfluxDB line protocol data, apply the deadband compression to the data, then forward the data to the nominated InfluxDB server.

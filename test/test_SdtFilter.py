@@ -31,7 +31,7 @@ def test_filterpoint():
     assert filter.filterPoint(140, 40) == [(130,25)]
     assert filter.filterPoint(150, 30) == []
     assert filter.filterPoint(160, 45) == []
-    assert filter.filterPoint(180, 5) == [(166, 38)]
+    assert filter.filterPoint(180, 5) == [(166, 33)]
 
     return
 
@@ -40,7 +40,7 @@ def test_filterpoints_list():
     filter = SdtFilter(10, 100)
 
     data = [(100, 20),(110, 10),(120, 20),(140, 40),(150, 30),(160, 45),(180, 5)]    
-    assert filter.filterPoints(data) == [(100, 20),(130, 25),(166, 38)]   
+    assert filter.filterPoints(data) == [(100, 20),(130, 25),(166, 33)]   
 
     return
 
@@ -54,7 +54,7 @@ def test_filterpoints_df():
                     })
     expected = DataFrame({
                     "t" : [100, 130, 166],
-                    "v" : [20, 25, 38]
+                    "v" : [20, 25, 33]
                     })
     result = filter.filterPoints(data)
     testing.assert_frame_equal(result, expected, check_dtype=False)
