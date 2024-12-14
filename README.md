@@ -82,7 +82,7 @@ plt.legend()
 plt.show()
 ```
 
-A linear trend results with all points within +/- the compression deviation.
+The output data shows a reduced number of points with the distance of all input points to the interpolated output data within +/- the compression deviation.
 
 ![Trend showing output data from SDT in orange with input data in blue.](images/example1.png?raw=true)
 
